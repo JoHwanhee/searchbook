@@ -5,10 +5,14 @@ SearchBooks is an app built with Jetpack Compose and architecture of MVVM + MVI.
 This sample showcases:
 - Books Screen : the list of New Books
 - Search of books Screen : the list of searched books
+  - Support keyword for search
+    - addition operation: android|java
+    - subtraction operation : android-java
+    - direct search : "android-java"
 - Details of a book : the details of a selected book 
 
-![](./list.png)
-![](./search.png)
+![](./list.png =250x)
+![](./search.png =250x)
 
 # Architecture
 The project is layered with a View, Presentation, Model separation and presents a blend between MVVM and MVI.
