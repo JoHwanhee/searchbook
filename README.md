@@ -42,3 +42,8 @@ Architecture layers:
         * [Room](https://developer.android.com/topic/libraries/architecture/room) for local database
     * [Retrofit](https://square.github.io/retrofit/) for networking
     * [Coil](https://github.com/coil-kt/coil) for image loading
+
+# MAD Score
+
+![](./madscore.png) 
+![details](https://madscorecard.withgoogle.com/scorecards/396195600/)
