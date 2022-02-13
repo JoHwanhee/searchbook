@@ -11,8 +11,8 @@ This sample showcases:
     - direct search : "android-java"
 - Details of a book : the details of a selected book 
 
-![](./list.png){: width="200" }
-![](./search.png){: width="200" }
+<img src="./list.png  width="200" height="400"/>
+<img src="./search.png  width="200" height="400"/>
 
 # Architecture
 The project is layered with a View, Presentation, Model separation and presents a blend between MVVM and MVI.
