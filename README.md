@@ -11,8 +11,8 @@ This sample showcases:
     - direct search : "android-java"
 - Details of a book : the details of a selected book 
 
-![](./list.png |width=250px)
-![](./search.png |width=250px)
+![](./list.png){: width="200" }
+![](./search.png){: width="200" }
 
 # Architecture
 The project is layered with a View, Presentation, Model separation and presents a blend between MVVM and MVI.
@@ -23,6 +23,9 @@ Architecture layers:
 * Model
 
 ![](./app-architecture.png)
+
+
+# Dependencies
 
 * UI
     * [Compose](https://developer.android.com/jetpack/compose) declarative UI framework
