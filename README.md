@@ -10,9 +10,10 @@ This sample showcases:
     - subtraction operation : android-java
     - direct search : "android-java"
 - Details of a book : the details of a selected book 
-
-<img src="./list.png  width="200" height="400"/>
-<img src="./search.png  width="200" height="400"/>
+<!-- 
+![](./app-list.png)
+![](./app-search.png)
+ -->
 
 # Architecture
 The project is layered with a View, Presentation, Model separation and presents a blend between MVVM and MVI.
@@ -46,4 +47,4 @@ Architecture layers:
 # MAD Score
 
 ![](./madscore.png) 
-![details](https://madscorecard.withgoogle.com/scorecards/396195600/)
+[details](https://madscorecard.withgoogle.com/scorecards/396195600/)
