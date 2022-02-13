@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">searchbook</string>
+    <string name="networkd_not_smooth">Network is not smooth.</string>
+    <string name="search">Search here</string>
+    <string name="raing">Rating</string>
+    <string name="language">Language</string>
+    <string name="pages">Pages</string>
+    <string name="year">Year</string>
+    <string name="publisher">Publisher</string>
+    <string name="price">Price</string>
+    <string name="decscrition">Decscrition</string>
+    <string name="read_more">read more</string>
 </resources>

@@ -1,25 +1,31 @@
-package com.hwanhee.searchbook.model.data
+package com.hwanhee.searchbook.model.remote
 
-import com.hwanhee.searchbook.model.response.BookResponse
-import com.hwanhee.searchbook.model.response.BooksResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class BookApi @Inject constructor(private val service: Service) {
-
     suspend fun getBooks(): BooksResponse = service.getBooksNew()
-    suspend fun getBookByIsbn13(isbn13: String): BookResponse =
+    suspend fun getBookByIsbn13(isbn13: String): BookDetailResponse =
         service.getBookByIsbn13(isbn13)
+    suspend fun search(word: String, index: Int): BooksResponse =
+        service.getBookBySearch(word, index)
 
     interface Service {
         @GET("new")
         suspend fun getBooksNew(): BooksResponse
 
         @GET("books/{isbn13}")
-        suspend fun getBookByIsbn13(@Path("isbn13") isbn13: String): BookResponse
+        suspend fun getBookByIsbn13(@Path("isbn13") isbn13: String): BookDetailResponse
+
+        @GET("search/{word}/{index}")
+        suspend fun getBookBySearch(
+            @Path("word") word: String,
+            @Path("index") index: Int
+        ): BooksResponse
     }
 
     companion object {
