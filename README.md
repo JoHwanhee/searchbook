@@ -11,8 +11,12 @@ This sample showcases:
     - direct search : "android-java"
 - Details of a book : the details of a selected book 
 
-<img src="./list.png  width="200" height="400"/>
-<img src="./search.png  width="200" height="400"/>
+![1_2](https://user-images.githubusercontent.com/12796737/153768587-80aa421b-844c-492d-a1f4-1c484850f66f.gif)
+![1_5](https://user-images.githubusercontent.com/12796737/153768595-dddb555d-bdc7-43e0-843b-6ff533e8062c.gif)
+![1_4](https://user-images.githubusercontent.com/12796737/153768593-ab1e56d0-4df1-4227-83e8-46c26151794b.gif)
+![1_3](https://user-images.githubusercontent.com/12796737/153768592-e701bc2f-f691-4596-a1cb-26fb9e4cc7e6.gif)
+
+
 
 # Architecture
 The project is layered with a View, Presentation, Model separation and presents a blend between MVVM and MVI.
@@ -46,4 +50,4 @@ Architecture layers:
 # MAD Score
 
 ![](./madscore.png) 
-![details](https://madscorecard.withgoogle.com/scorecards/396195600/)
+[details](https://madscorecard.withgoogle.com/scorecards/396195600/)
