@@ -76,7 +76,10 @@ private fun BookDetailsDestination() {
     val state = viewModel.viewState.value
     val uriHandler = LocalUriHandler.current
 
-    BookDetailsScreen(state) {
+    BookDetailsScreen(
+        state = state,
+        effectFlow = viewModel.effect
+    ) {
         if (it.isNotEmpty())
             uriHandler.openUri(it)
     }

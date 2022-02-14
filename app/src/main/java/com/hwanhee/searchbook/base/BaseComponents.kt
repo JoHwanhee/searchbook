@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 const val LAUNCH_LISTEN_FOR_EFFECTS = "LAUNCH_LISTEN_FOR_EFFECTS"
+const val LAUNCH_LISTEN_FOR_EFFECTS_DETAIL_VIEW = "LAUNCH_LISTEN_FOR_EFFECTS_DETAIL_VIEW"
 
 interface ViewState
 

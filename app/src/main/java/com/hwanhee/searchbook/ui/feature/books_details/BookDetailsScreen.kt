@@ -17,14 +17,36 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.hwanhee.searchbook.R
+import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS
+import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS_DETAIL_VIEW
 import com.hwanhee.searchbook.model.ui.BookItemDetail
+import com.hwanhee.searchbook.ui.feature.books.BooksContract
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 
 
 @Composable
 fun BookDetailsScreen(
     state: BookDetailsContract.State,
+    effectFlow: Flow<BookDetailsContract.Effect>?,
     onUrlClick: (url: String) -> Unit,
 ) {
+    val scaffoldState: ScaffoldState = rememberScaffoldState()
+    val errorMessage = stringResource(id = R.string.networkd_not_smooth)
+
+    LaunchedEffect(LAUNCH_LISTEN_FOR_EFFECTS_DETAIL_VIEW) {
+        effectFlow?.onEach { effect ->
+            when (effect) {
+                is BookDetailsContract.Effect.DataError ->
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = errorMessage,
+                        duration = SnackbarDuration.Short
+                    )
+            }
+        }?.collect()
+    }
+
     val scrollState = rememberScrollState()
     Surface(color = MaterialTheme.colors.background) {
         Column(modifier = Modifier.verticalScroll(scrollState)){
