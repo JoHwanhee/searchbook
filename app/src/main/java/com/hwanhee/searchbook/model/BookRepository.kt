@@ -24,15 +24,18 @@ class BookRepository @Inject constructor(
             emit(it)
         }
 
-        val items = dao.getAllBookItems().map { it.toBookItem() }
+        val items = dao.getBookItemAndDetails().map { it.detailEntity.toBookItem() }
         emit(BooksItem(items.count(), 1, items.toMutableList()))
 
         memoryCache = api.getBooks().toBooksItem()
         memoryCache?.let {
             emit(it)
 
+            dao.deleteAllBooksItems()
+
             it.items.forEach { bookItem ->
-                dao.insert(bookItem.toEntity())
+                dao.insert(bookItem.toBooksItemEntity())
+                dao.upsert(bookItem.toBookDetailEntity())
             }
         }
     }
@@ -84,7 +87,7 @@ class BookRepository @Inject constructor(
 
         val response = api.getBookByIsbn13(isbn13)
         emit(response.toBookItemDetail())
-        dao.upsert(response.toEntity())
+        dao.upsert(response.toBookDetailEntity())
     }
     .flowOn(ioDispatcher)
 }

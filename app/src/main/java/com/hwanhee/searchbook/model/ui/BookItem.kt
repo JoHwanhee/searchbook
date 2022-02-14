@@ -14,8 +14,8 @@ data class BooksItem(
 data class BookItem(
     val isbn13: String,
     val title: String,
-    val thumbnailUrl: String,
-    val description: String = ""
+    val subtitle: String = "",
+    val url: String
 )
 
 data class BookItemDetail(

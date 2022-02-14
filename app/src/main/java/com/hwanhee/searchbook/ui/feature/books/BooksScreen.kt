@@ -1,6 +1,5 @@
 package com.hwanhee.searchbook.ui.feature.books
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
 import com.hwanhee.searchbook.R
 import com.hwanhee.searchbook.base.InfiniteListHandler
 import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS
@@ -288,7 +285,7 @@ fun BookItemRow(
         .padding(16.dp)
     ) {
         Box(modifier = Modifier.align(alignment = Alignment.Top)) {
-            BookItemThumbnail(item.thumbnailUrl)
+            BookItemThumbnail(item.url)
         }
 
         BookItemDetails(
@@ -320,10 +317,10 @@ fun BookItemDetails(
             overflow = TextOverflow.Ellipsis
         )
 
-        if (item?.description?.trim()?.isNotEmpty() == true)
+        if (item?.subtitle?.trim()?.isNotEmpty() == true)
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
-                    text = item.description.trim(),
+                    text = item.subtitle.trim(),
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.caption,

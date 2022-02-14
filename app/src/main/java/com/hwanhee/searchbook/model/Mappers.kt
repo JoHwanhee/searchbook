@@ -9,13 +9,22 @@ import com.hwanhee.searchbook.model.ui.BookItem
 import com.hwanhee.searchbook.model.ui.BookItemDetail
 import com.hwanhee.searchbook.model.ui.BooksItem
 
-fun BookItem.toEntity(): BooksItemEntity {
+fun BookItem.toBooksItemEntity(): BooksItemEntity {
     return BooksItemEntity(
         isbn13 = this.isbn13,
     )
 }
 
-fun BookDetailResponse.toEntity() : BookDetailEntity {
+fun BookItem.toBookDetailEntity(): BookDetailEntity {
+    return BookDetailEntity(
+        isbn13= isbn13,
+        title= title,
+        subtitle= subtitle,
+        url= url,
+    )
+}
+
+fun BookDetailResponse.toBookDetailEntity() : BookDetailEntity {
     return BookDetailEntity(
         title= title?: "",
         subtitle= subtitle?: "",
@@ -49,8 +58,8 @@ fun BooksResponse.toBooksItem(): BooksItem {
         BookItem(
             isbn13 = book.isbn13 ?: "",
             title = book.title ?: "",
-            description = book.subtitle ?: "",
-            thumbnailUrl = book.image ?: ""
+            subtitle = book.subtitle ?: "",
+            url = book.image ?: ""
         )
     }
 
@@ -113,11 +122,11 @@ fun BookDetailEntity.toBookItemDetail() : BookItemDetail {
     )
 }
 
-fun BooksItemEntity.toBookItem(): BookItem {
+fun BookDetailEntity.toBookItem(): BookItem {
     return BookItem(
         isbn13 = this.isbn13,
-        title = "",
-        thumbnailUrl = "",
-        description = ""
+        title = this.title ?: "",
+        url = this.url ?: "",
+        subtitle = this.subtitle ?: ""
     )
 }

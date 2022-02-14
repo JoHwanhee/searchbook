@@ -10,6 +10,9 @@ interface BooksDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: BooksItemEntity)
 
+    @Query("delete from book_items")
+    suspend fun deleteAllBooksItems()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: BookDetailEntity)
 

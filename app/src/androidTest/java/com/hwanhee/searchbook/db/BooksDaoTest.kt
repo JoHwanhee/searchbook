@@ -51,6 +51,8 @@ class BooksDaoTest {
         Assert.assertEquals(details[0].detailEntity.isbn13, "test1")
         Assert.assertEquals(details[0].detailEntity.title, "testTitle")
         Assert.assertEquals(details[0].detailEntity.subtitle, "testSubTitle")
+
+        dao.deleteAllBooksItems()
     }
 
     @Test
@@ -83,10 +85,18 @@ class BooksDaoTest {
         Assert.assertEquals(details[1].detailEntity.isbn13, "test1")
         Assert.assertEquals(details[1].detailEntity.title, "testTitle")
         Assert.assertEquals(details[1].detailEntity.subtitle, "testSubTitle")
+
+        dao.deleteAllBooksItems()
     }
 
     @Test
     fun `bookDetail은_upsert가_기본_동작`() = runBlocking {
+        val booksItemEntity = BooksItemEntity(
+            isbn13 = "test1",
+        )
+        dao.insert(booksItemEntity)
+
+
         val bookDetails = BookDetailEntity(
             isbn13 = "test1",
             title = "testTitle1",
@@ -115,6 +125,8 @@ class BooksDaoTest {
         Assert.assertEquals(detail2[0].detailEntity.isbn13, "test1")
         Assert.assertEquals(detail2[0].detailEntity.title, "testTitle2")
         Assert.assertEquals(detail2[0].detailEntity.subtitle, "testSubTitle2")
+
+        dao.deleteAllBooksItems()
     }
 
     @After
