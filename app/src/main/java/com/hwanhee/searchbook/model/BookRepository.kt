@@ -35,7 +35,7 @@ class BookRepository @Inject constructor(
 
             it.items.forEach { bookItem ->
                 dao.insert(bookItem.toBooksItemEntity())
-                dao.upsert(bookItem.toBookDetailEntity())
+                dao.insert(bookItem.toBookDetailEntity())
             }
         }
     }
@@ -58,14 +58,6 @@ class BookRepository @Inject constructor(
             mergedBooksItem.total = baseItem.total
             mergedBooksItem.page = paging.page
             emit(mergedBooksItem)
-
-//            if (mergedBooksItem.total > 10 &&
-//                baseItem.items.count() < 10 &&
-//                paging.increaseIfNeedMore()
-//                    ) {
-//
-//
-//            }
         }
         else {
             var maxCount = 0
@@ -86,8 +78,8 @@ class BookRepository @Inject constructor(
         }
 
         val response = api.getBookByIsbn13(isbn13)
-        emit(response.toBookItemDetail())
         dao.upsert(response.toBookDetailEntity())
+        emit(response.toBookItemDetail())
     }
     .flowOn(ioDispatcher)
 }

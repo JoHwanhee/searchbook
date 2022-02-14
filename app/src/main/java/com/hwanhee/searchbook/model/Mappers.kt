@@ -20,19 +20,19 @@ fun BookItem.toBookDetailEntity(): BookDetailEntity {
         isbn13= isbn13,
         title= title,
         subtitle= subtitle,
-        url= url,
+        image = url,
     )
 }
 
 fun BookDetailResponse.toBookDetailEntity() : BookDetailEntity {
     return BookDetailEntity(
+        isbn13= isbn13?: "",
         title= title?: "",
         subtitle= subtitle?: "",
         authors= authors?: "",
         publisher= publisher?: "",
         language= language?: "",
         isbn10= isbn10?: "",
-        isbn13= isbn13?: "",
         pages= pages?: "",
         year= year?: "",
         rating= rating?: "",
