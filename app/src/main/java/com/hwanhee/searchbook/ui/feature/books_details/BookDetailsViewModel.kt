@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.hwanhee.searchbook.base.BaseViewModel
 import com.hwanhee.searchbook.model.BookRepository
 import com.hwanhee.searchbook.NavigationKeys
+import com.hwanhee.searchbook.ui.feature.books.BooksContract
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,17 +25,21 @@ class BookDetailsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val isbn13 = stateHandle.get<String>(NavigationKeys.Arg.BOOK_ISBN13)
-            isbn13?.let {
-                repository.getBookByIsbn13(isbn13).collect {
-                    setState { copy(bookItemDetail = it) }
-                }
+            stateHandle.get<String>(NavigationKeys.Arg.BOOK_ISBN13)?.let {
+                repository.getBookByIsbn13(it)
+                    .catch { errorNetwork() }
+                    .collect {
+                        setState { copy(bookItemDetail = it) }
+                    }
             }
         }
     }
 
+    private fun errorNetwork() {
+        setEffect { BookDetailsContract.Effect.DataError }
+    }
+    
     override fun setInitialState() = BookDetailsContract.State(null)
 
     override fun handleEvents(event: BookDetailsContract.Event) {}
-
 }

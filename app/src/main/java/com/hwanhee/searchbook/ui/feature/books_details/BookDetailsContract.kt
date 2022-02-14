@@ -5,6 +5,7 @@ import com.hwanhee.searchbook.base.ViewSideEffect
 import com.hwanhee.searchbook.base.ViewState
 import com.hwanhee.searchbook.model.ui.BookItem
 import com.hwanhee.searchbook.model.ui.BookItemDetail
+import com.hwanhee.searchbook.ui.feature.books.BooksContract
 
 
 class BookDetailsContract {
@@ -14,6 +15,7 @@ class BookDetailsContract {
         val bookItemDetail: BookItemDetail?
     ) : ViewState
 
-    sealed class Effect : ViewSideEffect
-
+    sealed class Effect : ViewSideEffect {
+        object DataError : BookDetailsContract.Effect()
+    }
 }

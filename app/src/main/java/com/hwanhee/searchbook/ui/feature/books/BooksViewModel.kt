@@ -10,6 +10,7 @@ import com.hwanhee.searchbook.base.SearchKeyword
 import com.hwanhee.searchbook.model.BookRepository
 import com.hwanhee.searchbook.model.toPaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -119,15 +120,16 @@ class BooksViewModel @Inject constructor(
             return
 
         viewModelScope.launch {
-            try {
-                setState {
-                    copy(books = books,
-                        isLoading = false,
-                        isLoadingMore = true,
-                        isSearchOpened = true)
-                }
+            setState {
+                copy(books = books,
+                    isLoading = false,
+                    isLoadingMore = true,
+                    isSearchOpened = true)
+            }
 
-                repository.search(word, paging).collect {
+            repository.search(word, paging)
+                .catch { errorNetwork() }
+                .collect {
                     page = it.toPaging()
 
                     setState {
@@ -137,27 +139,19 @@ class BooksViewModel @Inject constructor(
                             isSearchOpened = true)
                     }
                 }
-            }
-            catch (e: Exception) {
-                errorNetwork()
-            }
         }
     }
 
     private fun getNewBookItems() {
         viewModelScope.launch {
-            try {
-                repository.latestNewBooks().collect {
+            repository.latestNewBooks()
+                .catch { errorNetwork() }
+                .collect {
                     page = it.toPaging()
-                    setState {
-                        copy(books = it.items, isLoading = false, isSearchOpened = false)
-                    }
+
+                    setState { copy(books = it.items, isLoading = false, isSearchOpened = false) }
                     setEffect { BooksContract.Effect.DataWasLoaded }
                 }
-            }
-            catch (e: Exception) {
-                errorNetwork()
-            }
         }
     }
 }
