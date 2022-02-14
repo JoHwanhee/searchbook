@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun BooksScreen(
     state: BooksContract.State,
-    searchTextState: State<String>,
+    searchTextState: String,
     effectFlow: Flow<BooksContract.Effect>?,
     onEventSent: (event: BooksContract.Event) -> Unit,
     onNavigationRequested: (navigationEffect: BooksContract.Effect.Navigation) -> Unit
@@ -75,7 +75,7 @@ fun BooksScreen(
         topBar = {
             MainAppBar(
                 state = state,
-                searchTextState = searchTextState.value,
+                searchTextState = searchTextState,
                 searchTextFocus = focusRequester,
                 onTextChange = {
                     onEventSent(BooksContract.Event.UpdateSearchText(it))

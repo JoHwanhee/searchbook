@@ -57,9 +57,10 @@ private fun SearchBookApp() {
 private fun BooksDestination(navController: NavHostController) {
     val viewModel: BooksViewModel = hiltViewModel()
     val state = viewModel.viewState.value
+    val searchTextState = viewModel.searchTextState.value
     BooksScreen(
         state = state,
-        searchTextState = viewModel.searchTextState,
+        searchTextState = searchTextState,
         effectFlow = viewModel.effect,
         onEventSent = { event -> viewModel.setEvent(event) },
         onNavigationRequested = { navigationEffect ->

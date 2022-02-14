@@ -4,13 +4,10 @@ import com.hwanhee.searchbook.base.Paging
 import com.hwanhee.searchbook.base.SearchKeyword
 import com.hwanhee.searchbook.db.BooksDao
 import com.hwanhee.searchbook.di.IoDispatcher
-import com.hwanhee.searchbook.model.mappers.toBookItem
-import com.hwanhee.searchbook.model.mappers.toBookItemDetail
-import com.hwanhee.searchbook.model.mappers.toBooksItem
-import com.hwanhee.searchbook.model.mappers.toEntity
 import com.hwanhee.searchbook.model.remote.BookApi
 import com.hwanhee.searchbook.model.ui.BooksItem
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,11 +32,11 @@ class BookRepository @Inject constructor(
             emit(it)
 
             it.items.forEach { bookItem ->
-                dao.addBook(bookItem.toEntity())
+                dao.insert(bookItem.toEntity())
             }
         }
     }
-    .flowOn(ioDispatcher)
+    .flowOn(Dispatchers.IO)
 
     suspend fun search(keyword: SearchKeyword, paging: Paging) = flow {
         // 제거 해야되는 경우면 after 키워드를 먼저가져온 후, 첫번 째 키워드의 결과에서 중복되는 id값을 제거하여 emit 한다
@@ -58,6 +55,14 @@ class BookRepository @Inject constructor(
             mergedBooksItem.total = baseItem.total
             mergedBooksItem.page = paging.page
             emit(mergedBooksItem)
+
+//            if (mergedBooksItem.total > 10 &&
+//                baseItem.items.count() < 10 &&
+//                paging.increaseIfNeedMore()
+//                    ) {
+//
+//
+//            }
         }
         else {
             var maxCount = 0
@@ -69,7 +74,7 @@ class BookRepository @Inject constructor(
             }
         }
     }
-    .flowOn(ioDispatcher)
+    .flowOn(Dispatchers.IO)
 
     suspend fun getBookByIsbn13(isbn13: String) = flow {
         val bookEntity = dao.getBookDetailByIsbn13(isbn13)
@@ -79,7 +84,7 @@ class BookRepository @Inject constructor(
 
         val response = api.getBookByIsbn13(isbn13)
         emit(response.toBookItemDetail())
-        dao.addBookItemDetail(response.toEntity())
+        dao.upsert(response.toEntity())
     }
     .flowOn(ioDispatcher)
 }

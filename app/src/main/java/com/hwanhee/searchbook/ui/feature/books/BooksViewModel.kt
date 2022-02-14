@@ -8,7 +8,7 @@ import com.hwanhee.searchbook.base.BaseViewModel
 import com.hwanhee.searchbook.base.Paging
 import com.hwanhee.searchbook.base.SearchKeyword
 import com.hwanhee.searchbook.model.BookRepository
-import com.hwanhee.searchbook.model.mappers.toPaging
+import com.hwanhee.searchbook.model.toPaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.lang.Exception

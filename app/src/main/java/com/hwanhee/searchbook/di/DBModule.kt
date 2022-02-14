@@ -22,7 +22,16 @@ class DBModule {
     ): AppDatabase = Room
             .databaseBuilder(context, AppDatabase::class.java, "search_app.db")
             .build()
- 
+
+//    @Singleton
+//    @Provides
+//    fun provideAppDatabaseTest(
+//        @ApplicationContext context: Context
+//    ): AppDatabase = Room
+//        .databaseBuilder(context, AppDatabase::class.java, "test.db")
+//        .build()
+
+
     @Singleton
     @Provides
     fun provideBooksDao(appDatabase: AppDatabase): BooksDao = appDatabase.booksDao()

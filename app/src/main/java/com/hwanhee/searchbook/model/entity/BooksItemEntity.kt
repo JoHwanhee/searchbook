@@ -9,13 +9,10 @@ import com.hwanhee.searchbook.model.ui.BooksItem
 
 @Entity(tableName = "book_items",
     indices = [
-        Index(value = ["isbn13"], unique = true)
+        Index(value = ["isbn13"], unique = false)
     ]
 )
 data class BooksItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name="isbn13") val isbn13: String,
-    @ColumnInfo(name="title") val title: String,
-    @ColumnInfo(name="subtitle") val subtitle: String,
-    @ColumnInfo(name="thumbnail_url") val thumbnailUrl: String,
+    @ColumnInfo(name="isbn13") val isbn13: String
 )

@@ -1,24 +1,26 @@
 package com.hwanhee.searchbook.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.hwanhee.searchbook.model.entity.BookDetailEntity
+import com.hwanhee.searchbook.model.entity.BookItemAndDetails
 import com.hwanhee.searchbook.model.entity.BooksItemEntity
 
 @Dao
 interface BooksDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addBook(item: BooksItemEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(entity: BooksItemEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addBookItemDetail(toEntity: BookDetailEntity)
+    suspend fun upsert(entity: BookDetailEntity)
 
     @Query("SELECT * FROM book_items")
     suspend fun getAllBookItems(): List<BooksItemEntity>
 
     @Query("SELECT * FROM book_detail WHERE isbn13 = :isbn13")
     suspend fun getBookDetailByIsbn13(isbn13:String): BookDetailEntity?
+
+    @Transaction
+    @Query("SELECT * FROM book_items")
+    fun getBookItemAndDetails(): List<BookItemAndDetails>
 }
  

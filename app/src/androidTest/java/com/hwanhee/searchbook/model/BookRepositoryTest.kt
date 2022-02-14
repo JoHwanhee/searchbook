@@ -1,8 +1,8 @@
-package com.hwanhee.searchbook
+package com.hwanhee.searchbook.model
 import androidx.test.platform.app.InstrumentationRegistry
+import com.hwanhee.searchbook.TestHelper
 import com.hwanhee.searchbook.base.Paging
 import com.hwanhee.searchbook.base.SearchKeyword
-import com.hwanhee.searchbook.model.BookRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.newSingleThreadContext

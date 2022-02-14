@@ -1,4 +1,4 @@
-package com.hwanhee.searchbook.model.mappers
+package com.hwanhee.searchbook.model
 
 import com.hwanhee.searchbook.base.Paging
 import com.hwanhee.searchbook.model.entity.BookDetailEntity
@@ -12,9 +12,6 @@ import com.hwanhee.searchbook.model.ui.BooksItem
 fun BookItem.toEntity(): BooksItemEntity {
     return BooksItemEntity(
         isbn13 = this.isbn13,
-        title = this.title,
-        thumbnailUrl = this.thumbnailUrl,
-        subtitle = this.description
     )
 }
 
@@ -119,8 +116,8 @@ fun BookDetailEntity.toBookItemDetail() : BookItemDetail {
 fun BooksItemEntity.toBookItem(): BookItem {
     return BookItem(
         isbn13 = this.isbn13,
-        title = this.title,
-        thumbnailUrl = this.thumbnailUrl,
-        description = this.subtitle
+        title = "",
+        thumbnailUrl = "",
+        description = ""
     )
 }
