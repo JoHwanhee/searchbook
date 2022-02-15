@@ -9,7 +9,10 @@ This sample showcases:
     - addition operation: android|java
     - subtraction operation : android-java
     - direct search : "android-java"
+  - Support Infinite scroll 
+    - when scroll meets the 5th item from the bottom, to load more items
 - Details of a book screen: the details of a selected book 
+
 
 ![1_2](https://user-images.githubusercontent.com/12796737/153768587-80aa421b-844c-492d-a1f4-1c484850f66f.gif)
 ![1_5](https://user-images.githubusercontent.com/12796737/153768595-dddb555d-bdc7-43e0-843b-6ff533e8062c.gif)
