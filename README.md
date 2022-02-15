@@ -17,6 +17,11 @@ This sample showcases:
 ![1_3](https://user-images.githubusercontent.com/12796737/153768592-e701bc2f-f691-4596-a1cb-26fb9e4cc7e6.gif)
 
 
+# todo
+- [ ] jacoco coverage
+- [ ] report badge
+- [ ] CI with github actions
+- [ ] CD with firebase
 
 # Architecture
 The project is layered with a View, Presentation, Model separation and presents a blend between MVVM and MVI.
@@ -28,9 +33,11 @@ Architecture layers:
 
 ![](./app-architecture.png)
 
-
 # API
 - https://api.itbook.store/
+
+# Test
+
 
 # Dependencies
 
