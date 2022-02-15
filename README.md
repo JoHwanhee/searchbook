@@ -22,6 +22,7 @@ This sample showcases:
       - remote data
     - the search method has no cached
 - Details of a book screen: the details of a selected book 
+- Support android instrumented test
 
 
 ![1_2](https://user-images.githubusercontent.com/12796737/153768587-80aa421b-844c-492d-a1f4-1c484850f66f.gif)
