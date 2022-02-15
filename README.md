@@ -33,12 +33,8 @@ Architecture layers:
 
 ![스크린샷 2022-02-16 오전 2 37 50](https://user-images.githubusercontent.com/12796737/154117778-154039e5-7125-4573-a03e-95498138e82a.png)
 
-
 # API
 - https://api.itbook.store/
-
-# Test
-
 
 # Dependencies
 
@@ -60,5 +56,5 @@ Architecture layers:
 
 # MAD Score
 
-![](./madscore.png) 
+![madscore](https://user-images.githubusercontent.com/12796737/154118772-a39ea3af-9bfb-4c61-a636-21b34c0a14d2.png)
 [details](https://madscorecard.withgoogle.com/scorecards/396195600/)
