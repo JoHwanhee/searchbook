@@ -1,5 +1,6 @@
 package com.hwanhee.searchbook.ui.feature.books
 
+import com.hwanhee.searchbook.base.SearchKeyword
 import com.hwanhee.searchbook.base.ViewEvent
 import com.hwanhee.searchbook.base.ViewSideEffect
 import com.hwanhee.searchbook.base.ViewState
@@ -11,7 +12,7 @@ class BooksContract {
         object SearchOn : Event()
         object SearchOff : Event()
         object ScrollMeetsBottom : Event()
-        data class Search(val searchWord: String) : Event()
+        data class Search(val searchWord: SearchKeyword) : Event()
         data class UpdateSearchText(val value: String) : Event()
     }
 
@@ -22,7 +23,7 @@ class BooksContract {
 
     sealed class Effect : ViewSideEffect {
         object DataWasLoaded : Effect()
-        object DataError : Effect()
+        data class DataError(val e:Throwable) : Effect()
 
         sealed class Navigation : Effect() {
             data class ToBookDetails(val isbn13: String) : Navigation()

@@ -1,8 +1,6 @@
 package com.hwanhee.searchbook.base
 
-class SearchKeyword(private val _value: String) {
-    val value get() = _value
-
+class SearchKeyword(_value: String) {
     private var _operator: Operator = Operator.NONE
 
     private var _baseKeyword = ""
@@ -11,8 +9,10 @@ class SearchKeyword(private val _value: String) {
     private var _afterKeyword = ""
     val afterKeyword get() = _afterKeyword
 
+    private var searchValue: String = _value.trim()
+
     init {
-        initSearchMode()
+        initSearchMode(searchValue)
     }
 
     /**
@@ -22,44 +22,43 @@ class SearchKeyword(private val _value: String) {
      * 예시 2) |이 여러번 인경우, ||-
      * 예시 3) 쌍따옴표로 묶은경우, "java-android"
      * */
-    private fun initSearchMode() {
-
+    private fun initSearchMode(value: String) {
         val reg = """-+\||\|+-|".+"""".toRegex()
-        val isNotKeywordSearch = reg.containsMatchIn(_value)
+        val isNotKeywordSearch = reg.containsMatchIn(value)
 
         when {
             isNotKeywordSearch -> {
                 _operator = Operator.NONE
             }
-            _value.contains("|") -> {
-                val sliced = _value.split("|")
+            value.contains("|") -> {
+                val sliced = value.split("|")
                 _operator = if (sliced.size == 2) Operator.PLUS else Operator.NONE
-                _baseKeyword = sliced[0]
-                _afterKeyword = sliced[1]
+                _baseKeyword = sliced[0].trim()
+                _afterKeyword = sliced[1].trim()
             }
-            _value.contains("-") -> {
-                val sliced = _value.split("-")
+            value.contains("-") -> {
+                val sliced = value.split("-")
                 _operator = if (sliced.size == 2) Operator.MINUS else Operator.NONE
-                _baseKeyword = sliced[0]
-                _afterKeyword = sliced[1]
+                _baseKeyword = sliced[0].trim()
+                _afterKeyword = sliced[1].trim()
             }
         }
     }
 
     fun getKeywords() : List<String> {
         return if (_operator == Operator.NONE) {
-            listOf(value)
+            listOf(searchValue)
         } else {
             listOf(baseKeyword, afterKeyword)
         }
     }
 
-    fun isKeywordSearch() : Boolean {
-        return _operator != Operator.NONE
+    fun isEmpty() : Boolean {
+        return searchValue.isEmpty()
     }
 
-    fun isEmpty() : Boolean {
-        return _value.isEmpty()
+    fun isKeywordSearch() : Boolean {
+        return _operator != Operator.NONE
     }
 
     fun needSubs() : Boolean {

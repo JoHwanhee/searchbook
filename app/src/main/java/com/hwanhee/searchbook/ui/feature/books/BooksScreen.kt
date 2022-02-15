@@ -32,6 +32,7 @@ import coil.compose.rememberImagePainter
 import com.hwanhee.searchbook.R
 import com.hwanhee.searchbook.base.InfiniteListHandler
 import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS
+import com.hwanhee.searchbook.base.SearchKeyword
 import com.hwanhee.searchbook.model.ui.BookItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -78,7 +79,7 @@ fun BooksScreen(
                     onEventSent(BooksContract.Event.UpdateSearchText(it))
                 },
                 onSearchClicked = {
-                    onEventSent(BooksContract.Event.Search(it))
+                    onEventSent(BooksContract.Event.Search(SearchKeyword(it)))
                     focusManager.clearFocus()
                 },
                 onCloseClicked = {

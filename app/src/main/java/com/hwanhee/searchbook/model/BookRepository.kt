@@ -39,7 +39,7 @@ class BookRepository @Inject constructor(
             }
         }
     }
-    .flowOn(Dispatchers.IO)
+    .flowOn(ioDispatcher)
 
     suspend fun search(keyword: SearchKeyword, paging: Paging) = flow {
         // 제거 해야되는 경우면 after 키워드를 먼저가져온 후, 첫번 째 키워드의 결과에서 중복되는 id값을 제거하여 emit 한다
@@ -69,7 +69,7 @@ class BookRepository @Inject constructor(
             }
         }
     }
-    .flowOn(Dispatchers.IO)
+    .flowOn(ioDispatcher)
 
     suspend fun getBookByIsbn13(isbn13: String) = flow {
         val bookEntity = dao.getBookDetailByIsbn13(isbn13)

@@ -5,14 +5,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.hwanhee.searchbook.base.BaseViewModel
+import com.hwanhee.searchbook.base.logger.Logger
 import com.hwanhee.searchbook.base.Paging
 import com.hwanhee.searchbook.base.SearchKeyword
 import com.hwanhee.searchbook.model.BookRepository
 import com.hwanhee.searchbook.model.toPaging
+import com.hwanhee.searchbook.model.ui.BooksItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,48 +23,37 @@ class BooksViewModel @Inject constructor(
         BooksContract.Event,
         BooksContract.State,
         BooksContract.Effect>() {
-
-    private var page: Paging
-    private var lastWordCache = ""
-
-    // server has no response that count of page, so that client need to set default value to 10
-    private val perCount = 10
+    private var pageCache: Paging
+    private var keywordCache = SearchKeyword("")
 
     private val _searchTextState: MutableState<String> =
         mutableStateOf(value = "")
     val searchTextState: State<String> = _searchTextState
 
-
     init {
-        page = Paging(
-            currentPage = 1,
-            total = 0,
-            perCount = perCount
-        )
+        pageCache = Paging()
         getNewBookItems()
     }
-
-    override fun setInitialState() =
-        BooksContract.State(books = listOf(), isLoading = true, isSearchOpened = false)
 
     override fun handleEvents(event: BooksContract.Event) {
         when (event) {
             is BooksContract.Event.BookSelection -> {
-                bookSelection(event.id)
+                bookSelectedEffect(event.id)
             }
 
             is BooksContract.Event.ScrollMeetsBottom -> {
                 if (increaseIfNeedMore()){
-                    searchBooks(SearchKeyword(lastWordCache), page)
+                    searchBooks(keywordCache, pageCache)
                 }
             }
 
             is BooksContract.Event.SearchOn -> {
+                pageCache.init()
                 setSearchState()
             }
 
             is BooksContract.Event.SearchOff -> {
-                clearSearchWord()
+                initSearchWord()
                 getNewBookItems()
             }
 
@@ -72,47 +62,12 @@ class BooksViewModel @Inject constructor(
             }
 
             is BooksContract.Event.Search -> {
-                page.init()
-                setState {
-                    BooksContract.State(books = emptyList(), isLoading = false, isSearchOpened = true)
-                }
-                searchBooks(SearchKeyword(event.searchWord), page)
-                lastWordCache = event.searchWord
+                pageCache.init()
+                setSearchOpenedState()
+                searchBooks(event.searchWord, pageCache)
+                keywordCache = event.searchWord
             }
         }
-    }
-
-    private fun clearSearchWord() {
-        _searchTextState.value = ""
-        lastWordCache = ""
-    }
-
-    private fun increaseIfNeedMore() : Boolean {
-        var searchMode = false
-        currentState {
-            searchMode = isSearchOpened
-        }
-
-        return searchMode && page.increaseIfNeedMore()
-    }
-
-    private fun setSearchState() {
-        page.init()
-        setState {
-            BooksContract.State(books = books, isLoading = false, isSearchOpened = true)
-        }
-    }
-
-    private fun updateSearchTextState(value: String) {
-        _searchTextState.value = value
-    }
-
-    private fun bookSelection(id: String) {
-        setEffect { BooksContract.Effect.Navigation.ToBookDetails(id) }
-    }
-
-    private fun errorNetwork() {
-        setEffect { BooksContract.Effect.DataError }
     }
 
     private fun searchBooks(word: SearchKeyword, paging: Paging) {
@@ -120,24 +75,17 @@ class BooksViewModel @Inject constructor(
             return
 
         viewModelScope.launch {
-            setState {
-                copy(books = books,
-                    isLoading = false,
-                    isLoadingMore = true,
-                    isSearchOpened = true)
-            }
-
+            copySearchStartsState()
             repository.search(word, paging)
-                .catch { errorNetwork() }
-                .collect {
-                    page = it.toPaging()
-
-                    setState {
-                        copy(books = books.plus(it.items),
-                            isLoading = false,
-                            isLoadingMore = false,
-                            isSearchOpened = true)
+                .catch {
+                    e-> run {
+                        Logger.e(e)
+                        errorEffect(e)
                     }
+                }
+                .collect {
+                    pageCache = it.toPaging()
+                    copySearchEndedState(it)
                 }
         }
     }
@@ -145,13 +93,77 @@ class BooksViewModel @Inject constructor(
     private fun getNewBookItems() {
         viewModelScope.launch {
             repository.latestNewBooks()
-                .catch { errorNetwork() }
+                .catch {
+                    e-> run {
+                        Logger.e(e)
+                        errorEffect(e)
+                    }
+                }
                 .collect {
-                    page = it.toPaging()
-
+                    pageCache = it.toPaging()
                     setState { copy(books = it.items, isLoading = false, isSearchOpened = false) }
                     setEffect { BooksContract.Effect.DataWasLoaded }
                 }
         }
+    }
+
+    override fun setInitialState() =
+        BooksContract.State(books = listOf(), isLoading = true, isSearchOpened = false)
+
+    private fun setSearchOpenedState() =
+        setState {
+            BooksContract.State(
+                books = emptyList(),
+                isLoading = false,
+                isLoadingMore = false,
+                isSearchOpened = true)
+        }
+
+    private fun setSearchState() =
+        setState {
+            BooksContract.State(
+                books = books,
+                isLoading = false,
+                isSearchOpened = true)
+        }
+
+    private fun copySearchStartsState() =
+        setState {
+            copy(isLoading = pageCache.page == 1,
+                 isLoadingMore = pageCache.page != 1)
+        }
+
+    private fun copySearchEndedState(newItem: BooksItem) =
+        setState {
+            copy(books = books.plus(newItem.items),
+                 isLoading = false,
+                 isLoadingMore = false)
+        }
+
+    private fun bookSelectedEffect(id: String) =
+        setEffect {
+            BooksContract.Effect.Navigation.ToBookDetails(id)
+        }
+
+    private fun errorEffect(e: Throwable) =
+        setEffect {
+            BooksContract.Effect.DataError(e)
+        }
+
+    private fun initSearchWord() {
+        _searchTextState.value = ""
+        keywordCache = SearchKeyword("")
+    }
+
+    private fun increaseIfNeedMore() : Boolean {
+        var searchMode = false
+        currentState {
+            searchMode = isSearchOpened
+        }
+        return searchMode && pageCache.increaseIfNeedMore()
+    }
+
+    private fun updateSearchTextState(value: String) {
+        _searchTextState.value = value
     }
 }

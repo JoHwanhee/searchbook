@@ -19,12 +19,6 @@ interface BooksDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: BookDetailEntity)
 
-//    @Query("UPDATE book_detail SET title = :title, subtitle = :subTitle, ")
-//    suspend fun updateTitleSubtitleImage(title: String, subTitle: String, image: String)
-
-    @Query("SELECT * FROM book_items")
-    suspend fun getAllBookItems(): List<BooksItemEntity>
-
     @Query("SELECT * FROM book_detail WHERE isbn13 = :isbn13")
     suspend fun getBookDetailByIsbn13(isbn13:String): BookDetailEntity?
 

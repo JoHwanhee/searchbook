@@ -14,41 +14,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object CoroutinesScopesModule {
-//    @Singleton
-//    @Provides
-//    fun providesCoroutineScope(): CoroutineScope {
-//        return CoroutineScope(SupervisorJob() + Dispatchers.Default)
-//    }
-
-    @DefaultDispatcher
-    @Provides
-    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
     @IoDispatcher
     @Provides
     fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @MainDispatcher
-    @Provides
-    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
-
-    @MainImmediateDispatcher
-    @Provides
-    fun providesMainImmediateDispatcher(): CoroutineDispatcher = Dispatchers.Main.immediate
 }
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
-annotation class DefaultDispatcher
-
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
 annotation class IoDispatcher
-
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
-annotation class MainDispatcher
-
-@Retention(AnnotationRetention.BINARY)
-@Qualifier
-annotation class MainImmediateDispatcher
