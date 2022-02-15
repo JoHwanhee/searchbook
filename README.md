@@ -11,6 +11,16 @@ This sample showcases:
     - direct search : "android-java"
   - Support Infinite scroll 
     - when scroll meets the 5th item from the bottom, to load more items
+- Support caching
+  - Improved loading speed by caching (sqlite and memory)
+    - the flow of to get list of new books
+      - memory caching
+      - database caching (sqlite-room)
+      - remote data
+    - the flow of to get details of a book
+      - database caching (sqlite-room)
+      - remote data
+    - the search method has no cached
 - Details of a book screen: the details of a selected book 
 
 
