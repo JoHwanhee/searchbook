@@ -32,10 +32,9 @@ class BookRepositoryTest {
     }
 
     @Test
-    fun `새로운_책_호출_테스트_20개_여야한다`() = runBlocking {
+    fun `새로운_책_호출_테스트`() = runBlocking {
         repository.getNewBooks().collect {
             Assert.assertNotNull(it)
-            Assert.assertEquals(it.items.count(), 20)
         }
     }
 
@@ -43,7 +42,6 @@ class BookRepositoryTest {
     fun `리스트_호출_후_상세보기`() = runBlocking {
         repository.getNewBooks().collect {
             Assert.assertNotNull(it)
-            Assert.assertEquals(it.items.count(), 20)
 
             repository.getBookByIsbn13(it.items[0].isbn13).collect { bookDetail ->
                 Assert.assertEquals(it.items[0].isbn13, bookDetail.isbn13)

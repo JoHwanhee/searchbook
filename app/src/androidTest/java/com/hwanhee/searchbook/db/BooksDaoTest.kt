@@ -28,6 +28,8 @@ class BooksDaoTest {
 
     @Test
     fun `기본_insert_와_get_이_잘되어야한다`() = runBlocking {
+        dao.deleteAllBooksItems()
+
         val booksItemEntity = BooksItemEntity(
             isbn13 = "test1",
         )
@@ -57,6 +59,8 @@ class BooksDaoTest {
 
     @Test
     fun `BooksItemEntity은_중복_가능하다`() = runBlocking {
+        dao.deleteAllBooksItems()
+
         val booksItemEntity = BooksItemEntity(
             isbn13 = "test1",
         )
@@ -91,6 +95,8 @@ class BooksDaoTest {
 
     @Test
     fun `bookDetail은_upsert가_기본_동작`() = runBlocking {
+        dao.deleteAllBooksItems()
+
         val booksItemEntity = BooksItemEntity(
             isbn13 = "test1",
         )

@@ -26,7 +26,8 @@ class BookRepository @Inject constructor(
         dao.getBookItemAndDetails()
             .map { it.detailEntity.toBookItem() }
             .toDefaultBooksItem()
-            .let {
+            .takeIf { it.items.size > 0 }
+            ?.let {
                 emit(it)
             }
 
@@ -56,31 +57,45 @@ class BookRepository @Inject constructor(
     .flowOn(ioDispatcher)
 
     suspend fun searchBooks(keyword: SearchKeyword, paging: Paging) = flow {
-        if(keyword.isKeywordSearch() && keyword.needSubs()) {
-            // 제거 해야되는 경우면 after 키워드를 먼저가져온 후, 첫번 째 키워드의 결과에서 중복되는 id값을 제거하여 emit 한다
-            val afterItem = api.search(keyword.afterKeyword, paging.page)
-                .toBooksItem()
+        val isMinusMode = keyword.isKeywordSearch() && keyword.needSubs()
 
-            api.search(keyword.baseKeyword, paging.page)
-                .toBooksItem()
-                .let { baseItem ->
-                    emit(baseItem - afterItem)
-                }
-        }
-        else {
-            var maxCount = 0
-
-            keyword.getKeywords()
-                .forEach {
-                    api.search(it, paging.page)
-                        .toBooksItem()
-                        .let { booksItem ->
-                            maxCount = maxOf(maxCount, booksItem.total)
-                            booksItem.total = maxCount
-                            emit(booksItem)
-                        }
+        if(isMinusMode) {
+            searchBooksMinusMode(keyword, paging).collect {
+                emit(it)
             }
         }
+        else {
+            plusSearchBooksPlusMode(keyword, paging).collect {
+                emit(it)
+            }
+        }
+    }
+    .flowOn(ioDispatcher)
+
+    private suspend fun searchBooksMinusMode(keyword: SearchKeyword, paging: Paging) = flow {
+        val afterItem = api.search(keyword.afterKeyword, paging.page)
+            .toBooksItem()
+
+        api.search(keyword.baseKeyword, paging.page)
+            .toBooksItem()
+            .let { baseItem ->
+                emit(baseItem - afterItem)
+            }
+    }
+    .flowOn(ioDispatcher)
+
+    private suspend fun plusSearchBooksPlusMode(keyword: SearchKeyword, paging: Paging) = flow {
+        var maxCount = 0
+        keyword.getKeywords()
+            .forEach {
+                api.search(it, paging.page)
+                    .toBooksItem()
+                    .let { booksItem ->
+                        maxCount = maxOf(maxCount, booksItem.total)
+                        booksItem.total = maxCount
+                        emit(booksItem)
+                    }
+            }
     }
     .flowOn(ioDispatcher)
 
