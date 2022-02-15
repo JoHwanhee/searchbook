@@ -6,8 +6,8 @@ import com.hwanhee.searchbook.db.BooksDao
 import com.hwanhee.searchbook.di.IoDispatcher
 import com.hwanhee.searchbook.model.remote.BookApi
 import com.hwanhee.searchbook.model.ui.BooksItem
+import com.hwanhee.searchbook.model.ui.minus
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,68 +18,93 @@ class BookRepository @Inject constructor(
     private val dao: BooksDao,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    private var memoryCache: BooksItem? = null
-    suspend fun latestNewBooks() = flow {
-        memoryCache?.let {
+    suspend fun getNewBooks() = flow {
+        getCache()?.let {
             emit(it)
         }
 
-        val items = dao.getBookItemAndDetails().map { it.detailEntity.toBookItem() }
-        emit(BooksItem(items.count(), 1, items.toMutableList()))
-
-        memoryCache = api.getBooks().toBooksItem()
-        memoryCache?.let {
-            emit(it)
-
-            dao.deleteAllBooksItems()
-
-            it.items.forEach { bookItem ->
-                dao.insert(bookItem.toBooksItemEntity())
-                dao.insert(bookItem.toBookDetailEntity())
-            }
-        }
-    }
-    .flowOn(ioDispatcher)
-
-    suspend fun search(keyword: SearchKeyword, paging: Paging) = flow {
-        // 제거 해야되는 경우면 after 키워드를 먼저가져온 후, 첫번 째 키워드의 결과에서 중복되는 id값을 제거하여 emit 한다
-        if(keyword.isKeywordSearch() && keyword.needSubs()) {
-            val mergedBooksItem = BooksItem()
-            val afterItem = api.search(keyword.afterKeyword, paging.page).toBooksItem()
-            val idList = afterItem.items.map { it.isbn13 }
-
-            val baseItem = api.search(keyword.baseKeyword, paging.page).toBooksItem()
-            for (item in baseItem.items) {
-                if(!idList.contains(item.isbn13)) {
-                   mergedBooksItem.items.add(item)
-                }
+        dao.getBookItemAndDetails()
+            .map { it.detailEntity.toBookItem() }
+            .toDefaultBooksItem()
+            .let {
+                emit(it)
             }
 
-            mergedBooksItem.total = baseItem.total
-            mergedBooksItem.page = paging.page
-            emit(mergedBooksItem)
-        }
-        else {
-            var maxCount = 0
-            keyword.getKeywords().forEach {
-                val item = api.search(it, paging.page).toBooksItem()
-                maxCount = maxOf(maxCount, item.total)
-                item.total = maxCount
-                emit(item)
+        api.getBooksNew()
+            .toBooksItem()
+            .let {
+                emit(it)
+                setCache(it)
+                deleteAllDbItems()
+                insertsAllDbItems(it)
             }
-        }
     }
     .flowOn(ioDispatcher)
 
     suspend fun getBookByIsbn13(isbn13: String) = flow {
-        val bookEntity = dao.getBookDetailByIsbn13(isbn13)
-        bookEntity?.let {
-            emit(it.toBookItemDetail())
-        }
+        dao.getBookDetailByIsbn13(isbn13)
+            ?.let {
+                emit(it.toBookItemDetail())
+            }
 
-        val response = api.getBookByIsbn13(isbn13)
-        dao.upsert(response.toBookDetailEntity())
-        emit(response.toBookItemDetail())
+        api.getBookByIsbn13(isbn13)
+            .let {
+                dao.upsert(it.toBookDetailEntity())
+                emit(it.toBookItemDetail())
+            }
     }
     .flowOn(ioDispatcher)
+
+    suspend fun searchBooks(keyword: SearchKeyword, paging: Paging) = flow {
+        if(keyword.isKeywordSearch() && keyword.needSubs()) {
+            // 제거 해야되는 경우면 after 키워드를 먼저가져온 후, 첫번 째 키워드의 결과에서 중복되는 id값을 제거하여 emit 한다
+            val afterItem = api.search(keyword.afterKeyword, paging.page)
+                .toBooksItem()
+
+            api.search(keyword.baseKeyword, paging.page)
+                .toBooksItem()
+                .let { baseItem ->
+                    emit(baseItem - afterItem)
+                }
+        }
+        else {
+            var maxCount = 0
+
+            keyword.getKeywords()
+                .forEach {
+                    api.search(it, paging.page)
+                        .toBooksItem()
+                        .let { booksItem ->
+                            maxCount = maxOf(maxCount, booksItem.total)
+                            booksItem.total = maxCount
+                            emit(booksItem)
+                        }
+            }
+        }
+    }
+    .flowOn(ioDispatcher)
+
+    /************************
+     * Helpers in this class
+     * *********************/
+    private var memoryCache: BooksItem? = null
+
+    private suspend fun deleteAllDbItems() {
+        dao.deleteAllBooksItems()
+    }
+
+    private suspend fun insertsAllDbItems(item: BooksItem) {
+        item.items.forEach { bookItem ->
+            dao.insert(bookItem.toBooksItemEntity())
+            dao.insert(bookItem.toBookDetailEntity())
+        }
+    }
+
+    private fun getCache(): BooksItem? {
+        return memoryCache
+    }
+
+    private fun setCache(item: BooksItem?) {
+        memoryCache = item
+    }
 }

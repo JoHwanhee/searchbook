@@ -76,7 +76,7 @@ class BooksViewModel @Inject constructor(
 
         viewModelScope.launch {
             copySearchStartsState()
-            repository.search(word, paging)
+            repository.searchBooks(word, paging)
                 .catch {
                     e-> run {
                         Logger.e(e)
@@ -92,7 +92,7 @@ class BooksViewModel @Inject constructor(
 
     private fun getNewBookItems() {
         viewModelScope.launch {
-            repository.latestNewBooks()
+            repository.getNewBooks()
                 .catch {
                     e-> run {
                         Logger.e(e)
@@ -135,7 +135,7 @@ class BooksViewModel @Inject constructor(
 
     private fun copySearchEndedState(newItem: BooksItem) =
         setState {
-            copy(books = books.plus(newItem.items),
+            copy(books = books + newItem.items,
                  isLoading = false,
                  isLoadingMore = false)
         }

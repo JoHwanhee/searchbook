@@ -130,3 +130,7 @@ fun BookDetailEntity.toBookItem(): BookItem {
         subtitle = this.subtitle ?: ""
     )
 }
+
+fun List<BookItem>.toDefaultBooksItem(): BooksItem {
+    return BooksItem(this.count(), 1, this.toMutableList())
+}

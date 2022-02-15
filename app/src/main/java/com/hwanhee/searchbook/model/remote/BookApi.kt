@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class BookApi @Inject constructor(private val service: Service) {
-    suspend fun getBooks(): BooksResponse = service.getBooksNew()
+    suspend fun getBooksNew(): BooksResponse = service.getBooksNew()
     suspend fun getBookByIsbn13(isbn13: String): BookDetailResponse =
         service.getBookByIsbn13(isbn13)
     suspend fun search(word: String, index: Int): BooksResponse =
@@ -36,5 +36,3 @@ class BookApi @Inject constructor(private val service: Service) {
         const val API_URL = API_SCHEME + API_HOST + API_VERSION + ROOT
     }
 }
-
-

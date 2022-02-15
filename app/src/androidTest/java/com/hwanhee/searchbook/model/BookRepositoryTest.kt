@@ -33,7 +33,7 @@ class BookRepositoryTest {
 
     @Test
     fun `새로운_책_호출_테스트_20개_여야한다`() = runBlocking {
-        repository.latestNewBooks().collect {
+        repository.getNewBooks().collect {
             Assert.assertNotNull(it)
             Assert.assertEquals(it.items.count(), 20)
         }
@@ -41,7 +41,7 @@ class BookRepositoryTest {
 
     @Test
     fun `리스트_호출_후_상세보기`() = runBlocking {
-        repository.latestNewBooks().collect {
+        repository.getNewBooks().collect {
             Assert.assertNotNull(it)
             Assert.assertEquals(it.items.count(), 20)
 
@@ -53,7 +53,7 @@ class BookRepositoryTest {
 
     @Test
     fun `검색_결과는_페이지당_10개_여야한다`() = runBlocking {
-        repository.search(SearchKeyword("java"), Paging(currentPage = 1)).collect {
+        repository.searchBooks(SearchKeyword("java"), Paging(currentPage = 1)).collect {
             Assert.assertNotNull(it)
             Assert.assertEquals(it.items.count(), 10)
         }
@@ -61,7 +61,7 @@ class BookRepositoryTest {
 
     @Test
     fun `없는_페이지_결과는_0개_여야한다`() = runBlocking {
-        repository.search(SearchKeyword("java"), Paging(currentPage = 10000)).collect {
+        repository.searchBooks(SearchKeyword("java"), Paging(currentPage = 10000)).collect {
             Assert.assertNotNull(it)
             Assert.assertEquals(it.items.count(), 0)
         }
@@ -69,13 +69,13 @@ class BookRepositoryTest {
 
     @Test
     fun `키워드_검색_더하기는_emit_2개_여야한다`() = runBlocking {
-        val searched = repository.search(SearchKeyword("java|android"), Paging(currentPage = 1))
+        val searched = repository.searchBooks(SearchKeyword("java|android"), Paging(currentPage = 1))
         Assert.assertEquals(searched.count(), 2)
     }
 
     @Test
     fun `키워드_검색_더하기후_제목에_키워드가_포함되어야한다`() = runBlocking {
-        val searched = repository.search(SearchKeyword("java|android"), Paging(currentPage = 1))
+        val searched = repository.searchBooks(SearchKeyword("java|android"), Paging(currentPage = 1))
         Assert.assertEquals(searched.count(), 2)
         val booksItems = searched.take(2).toList()
         booksItems[0].items.forEach { bookItem ->
@@ -89,13 +89,13 @@ class BookRepositoryTest {
 
     @Test
     fun `키워드_검색_빼기는_emit_1개_여야한다`() = runBlocking {
-        val searched = repository.search(SearchKeyword("java-android"), Paging(currentPage = 1))
+        val searched = repository.searchBooks(SearchKeyword("java-android"), Paging(currentPage = 1))
         Assert.assertEquals(searched.count(), 1)
     }
 
     @Test
     fun `키워드_검색_빼기후_제목에_키워드가_미포함되어야한다`() = runBlocking {
-        val searched = repository.search(SearchKeyword("java-android"), Paging(currentPage = 1))
+        val searched = repository.searchBooks(SearchKeyword("java-android"), Paging(currentPage = 1))
         Assert.assertEquals(searched.count(), 1)
         val booksItem = searched.first()
         booksItem.items.forEach { bookItem ->
@@ -105,7 +105,7 @@ class BookRepositoryTest {
 
     @Test
     fun `같은_키워드_빼기후_개수가0개_여야한다`() = runBlocking {
-        val searched = repository.search(SearchKeyword("java-java"), Paging(currentPage = 1))
+        val searched = repository.searchBooks(SearchKeyword("java-java"), Paging(currentPage = 1))
         Assert.assertEquals(searched.count(), 1)
         val booksItem = searched.first()
         Assert.assertEquals(booksItem.items.count(), 0)
