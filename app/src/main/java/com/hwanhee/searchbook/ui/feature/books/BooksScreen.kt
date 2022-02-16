@@ -85,14 +85,17 @@ fun BooksScreen(
                     onEventSent(BooksContract.Event.UpdateSearchText(it))
                 },
                 onSearchClicked = {
-                    onEventSent(BooksContract.Event.Search(SearchKeyword(it)))
-                    focusManager.clearFocus()
+                    coroutineScope.launch {
+                        listState.scrollToItem(0)
+                        onEventSent(BooksContract.Event.Search(SearchKeyword(it)))
+                        focusManager.clearFocus()
+                    }
                 },
                 onCloseClicked = {
                     coroutineScope.launch {
-                        listState.animateScrollToItem(0)
+                        listState.scrollToItem(0)
+                        onEventSent(BooksContract.Event.SearchOff)
                     }
-                    onEventSent(BooksContract.Event.SearchOff)
                 },
                 onSearchTriggered = {
                     onEventSent(BooksContract.Event.SearchOn)

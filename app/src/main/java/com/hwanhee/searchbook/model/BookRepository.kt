@@ -24,8 +24,7 @@ class BookRepository @Inject constructor(
         }
 
         dao.getBookItemAndDetails()
-
-            .map { it.detailEntity.toBookItem() }
+            .toBookItemList()
             .toDefaultBooksItem()
             .takeIf { it.items.size > 0 }
             ?.let {
@@ -74,31 +73,28 @@ class BookRepository @Inject constructor(
     .flowOn(ioDispatcher)
 
     private suspend fun searchBooksMinusMode(keyword: SearchKeyword, paging: Paging) = flow {
-        val afterItem = api.search(keyword.afterKeyword, paging.page)
-            .toBooksItem()
-
-        api.search(keyword.baseKeyword, paging.page)
-            .toBooksItem()
-            .let { baseItem ->
-                emit(baseItem - afterItem)
-            }
+        emit(search(keyword.baseKeyword, paging) -
+                search(keyword.afterKeyword, paging)
+        )
     }
     .flowOn(ioDispatcher)
 
     private suspend fun plusSearchBooksPlusMode(keyword: SearchKeyword, paging: Paging) = flow {
         var maxCount = 0
-        keyword.getKeywords()
-            .forEach {
-                api.search(it, paging.page)
-                    .toBooksItem()
-                    .let { booksItem ->
-                        maxCount = maxOf(maxCount, booksItem.total)
-                        booksItem.total = maxCount
-                        emit(booksItem)
-                    }
+        keyword.getKeywords().forEach {
+            search(it, paging).let { booksItem ->
+                maxCount = maxOf(maxCount, booksItem.total)
+                booksItem.total = maxCount
+                emit(booksItem)
             }
+        }
     }
     .flowOn(ioDispatcher)
+
+    private suspend fun search(word: String, paging: Paging) : BooksItem {
+        return api.search(word, paging.page)
+            .toBooksItem()
+    }
 
     /************************
      * Helpers in this class
