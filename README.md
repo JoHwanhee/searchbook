@@ -21,15 +21,18 @@ This sample showcases:
       - database caching (sqlite-room)
       - remote data
     - the search method has no cached
+
 - Details of a book screen: the details of a selected book 
 - Support android instrumented test
 
+![sample_1](https://user-images.githubusercontent.com/12796737/154319317-1ce25dad-7b67-425e-b490-eb967f53266e.gif)
+![sample_6](https://user-images.githubusercontent.com/12796737/154319393-5e7c75b5-0d47-47ce-afb6-1831d1e4b934.gif)
+![sample_3](https://user-images.githubusercontent.com/12796737/154319375-ca95e7da-4ff6-44d6-9f0b-e808ba858105.gif)
+![sample_7](https://user-images.githubusercontent.com/12796737/154319401-40b87f96-83d1-451b-9f89-14ab470b9e21.gif)
+![sample_4](https://user-images.githubusercontent.com/12796737/154319343-a5d20601-4a49-477f-b91b-068551dea00a.gif)
+![sample_5](https://user-images.githubusercontent.com/12796737/154319356-eeb33a2e-a57e-4b0a-b6ac-6bfe7d33e4e9.gif)
 
-![1_2](https://user-images.githubusercontent.com/12796737/153768587-80aa421b-844c-492d-a1f4-1c484850f66f.gif)
-![1_5](https://user-images.githubusercontent.com/12796737/153768595-dddb555d-bdc7-43e0-843b-6ff533e8062c.gif)
-![1_4](https://user-images.githubusercontent.com/12796737/153768593-ab1e56d0-4df1-4227-83e8-46c26151794b.gif)
-![1_3](https://user-images.githubusercontent.com/12796737/153768592-e701bc2f-f691-4596-a1cb-26fb9e4cc7e6.gif)
-
+Full video : https://youtu.be/RB_gvO5JI5M
 
 # todo
 - [ ] jacoco coverage
