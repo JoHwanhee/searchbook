@@ -1,6 +1,8 @@
 package com.hwanhee.searchbook
 
 import android.content.Context
+import androidx.room.Room
+import com.hwanhee.searchbook.db.AppDatabase
 import com.hwanhee.searchbook.db.BooksDao
 import com.hwanhee.searchbook.di.BookApiProvider
 import com.hwanhee.searchbook.di.DBModule
@@ -18,7 +20,8 @@ class TestHelper {
 
         fun getBookDao(context: Context): BooksDao {
             val provider = DBModule()
-            val appDatabase = provider.provideAppDatabase(context)
+            val appDatabase = Room.inMemoryDatabaseBuilder(
+                context, AppDatabase::class.java).build()
             return provider.provideBooksDao(appDatabase)
         }
     }
