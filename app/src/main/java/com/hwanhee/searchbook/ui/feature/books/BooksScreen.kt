@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
@@ -124,7 +125,6 @@ fun BooksScreen(
             }
         }
     }
-
 }
 
 @Composable
@@ -202,25 +202,27 @@ fun SearchAppBar(
                     modifier = Modifier
                         .alpha(ContentAlpha.medium),
                     onClick = {
+                        onCloseClicked.invoke()
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "close icon",
                         tint = Color.White
                     )
                 }
             },
-            trailingIcon = {
+            trailingIcon =  {
+                if(text.isEmpty()) null
+                else
                 IconButton(
                     onClick = {
                         onTextChange("")
-                        onCloseClicked()
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close Icon",
+                        contentDescription = "clear Icon",
                         tint = Color.White
                     )
                 }
@@ -248,7 +250,7 @@ fun DefaultAppBar(onSearchClicked: () -> Unit) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(id = R.string.app_name)
+                text = stringResource(id = R.string.app_bar_title)
             )
         },
         actions = {
