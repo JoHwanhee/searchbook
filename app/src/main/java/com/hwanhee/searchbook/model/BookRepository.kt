@@ -24,7 +24,6 @@ class BookRepository @Inject constructor(
         }
 
         dao.getBookItemAndDetails()
-            .map { it.detailEntity.toBookItem() }
             .toDefaultBooksItem()
             .takeIf { it.items.size > 0 }
             ?.let {
@@ -36,16 +35,17 @@ class BookRepository @Inject constructor(
             .let {
                 emit(it)
                 setCache(it)
-                deleteAllDbItems()
-                insertsAllDbItems(it)
+                deleteAllBooksItems()
+                inserts(it)
             }
     }
     .flowOn(ioDispatcher)
 
     suspend fun getBookByIsbn13(isbn13: String) = flow {
         dao.getBookDetailByIsbn13(isbn13)
+            ?.toBookItemDetail()
             ?.let {
-                emit(it.toBookItemDetail())
+                emit(it)
             }
 
         api.getBookByIsbn13(isbn13)
@@ -104,11 +104,11 @@ class BookRepository @Inject constructor(
      * *********************/
     private var memoryCache: BooksItem? = null
 
-    private suspend fun deleteAllDbItems() {
+    private suspend fun deleteAllBooksItems() {
         dao.deleteAllBooksItems()
     }
 
-    private suspend fun insertsAllDbItems(item: BooksItem) {
+    private suspend fun inserts(item: BooksItem) {
         item.items.forEach { bookItem ->
             dao.insert(bookItem.toBooksItemEntity())
             dao.insert(bookItem.toBookDetailEntity())

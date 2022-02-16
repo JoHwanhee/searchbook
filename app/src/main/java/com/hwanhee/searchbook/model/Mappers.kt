@@ -2,6 +2,7 @@ package com.hwanhee.searchbook.model
 
 import com.hwanhee.searchbook.base.Paging
 import com.hwanhee.searchbook.model.entity.BookDetailEntity
+import com.hwanhee.searchbook.model.entity.BookItemAndDetails
 import com.hwanhee.searchbook.model.entity.BooksItemEntity
 import com.hwanhee.searchbook.model.remote.BookDetailResponse
 import com.hwanhee.searchbook.model.remote.BooksResponse
@@ -131,6 +132,13 @@ fun BookDetailEntity.toBookItem(): BookItem {
     )
 }
 
-fun List<BookItem>.toDefaultBooksItem(): BooksItem {
-    return BooksItem(this.count(), 1, this.toMutableList())
+
+fun List<BookItemAndDetails>.toBookItemList(): List<BookItem> {
+    return this.map { it.detailEntity.toBookItem() }
+}
+
+fun List<BookItemAndDetails>.toDefaultBooksItem(): BooksItem {
+    this.toBookItemList().let {
+        return BooksItem(it.count(), 1, it.toMutableList())
+    }
 }
