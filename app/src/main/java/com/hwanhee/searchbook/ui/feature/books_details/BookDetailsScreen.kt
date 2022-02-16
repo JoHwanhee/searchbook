@@ -19,6 +19,7 @@ import coil.compose.rememberImagePainter
 import com.hwanhee.searchbook.R
 import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS
 import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS_DETAIL_VIEW
+import com.hwanhee.searchbook.base.defaultCoilBuilder
 import com.hwanhee.searchbook.model.ui.BookItemDetail
 import com.hwanhee.searchbook.ui.feature.books.BooksContract
 import kotlinx.coroutines.flow.Flow
@@ -48,19 +49,19 @@ fun BookDetailsScreen(
     }
 
     val scrollState = rememberScrollState()
-    Surface(color = MaterialTheme.colors.background) {
-        Column(modifier = Modifier.verticalScroll(scrollState)){
-            state.bookItemDetail?.let { bookItem ->
-                Surface(elevation = 4.dp) {
-                    BookDetailsHeader(bookItem)
-                }
 
-                Spacer(modifier = Modifier.height(2.dp))
-
-                BookDetails(bookItem, onUrlClick=onUrlClick)
+    Column(modifier = Modifier.verticalScroll(scrollState)){
+        state.bookItemDetail?.let { bookItem ->
+            Surface(elevation = 4.dp) {
+                BookDetailsHeader(bookItem)
             }
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            BookDetails(bookItem, onUrlClick=onUrlClick)
         }
     }
+
 }
 
 @Composable
@@ -68,13 +69,12 @@ private fun BookDetails(
     bookItemDetail: BookItemDetail,
     onUrlClick: (url: String) -> Unit,
 ) {
-    Column {
+    Column(modifier = Modifier.fillMaxSize()) {
         BookDetailsBody(
             item = bookItemDetail,
             onUrlClick= onUrlClick,
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxSize()
         )
     }
 }
@@ -117,13 +117,9 @@ private fun BookDetailsHeader (
 ) {
     Row {
         Image(
-
             painter = rememberImagePainter(
                 data = item.image,
-                builder = {
-                    crossfade(true)
-                    transformations()
-                },
+                builder = defaultCoilBuilder(),
             ),
             modifier = Modifier.size(120.dp),
             contentDescription = "thumbnail picture",
@@ -149,27 +145,27 @@ private fun BookDetailsBody (
     onUrlClick: (url: String) -> Unit,
 ) {
     Column(modifier = modifier) {
-        BookDetailsBodyItem(stringResource(id = R.string.raing), item.rating)
+        BookDetailsBodyItem(stringResource(id = R.string.raing), item.rating, "0")
 
         Divider(Modifier.padding(top=16.dp, bottom = 8.dp))
 
-        BookDetailsBodyItem(stringResource(id = R.string.language), item.language)
+        BookDetailsBodyItem(stringResource(id = R.string.language), item.language, "-")
 
         Divider(Modifier.padding(top=16.dp, bottom = 8.dp))
 
-        BookDetailsBodyItem(stringResource(id = R.string.pages), item.pages)
+        BookDetailsBodyItem(stringResource(id = R.string.pages), item.pages, "0")
 
         Divider(Modifier.padding(top=16.dp, bottom = 8.dp))
 
-        BookDetailsBodyItem(stringResource(id = R.string.year), item.year)
+        BookDetailsBodyItem(stringResource(id = R.string.year), item.year, "0")
 
         Divider(Modifier.padding(top=16.dp, bottom = 8.dp))
 
-        BookDetailsBodyItem(stringResource(id = R.string.publisher), item.publisher)
+        BookDetailsBodyItem(stringResource(id = R.string.publisher), item.publisher, "-")
 
         Divider(Modifier.padding(top=16.dp, bottom = 8.dp))
 
-        BookDetailsBodyItem(stringResource(id = R.string.price), item.price)
+        BookDetailsBodyItem(stringResource(id = R.string.price), item.price, "$0")
 
         Divider(Modifier.padding(top=16.dp, bottom = 8.dp))
 
@@ -181,9 +177,12 @@ private fun BookDetailsBody (
 private fun BookDetailsBodyItem (
     title: String,
     body: String,
+    fallback: String
 ) {
     Text(text = title,  style = MaterialTheme.typography.h6)
-    Text(text = body,  style = MaterialTheme.typography.body1)
+
+    val bodyText = if (body.isEmpty()) fallback else body
+    Text(text = bodyText,  style = MaterialTheme.typography.body1)
 }
 
 

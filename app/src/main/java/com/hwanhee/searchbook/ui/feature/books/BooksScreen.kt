@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -33,10 +34,13 @@ import com.hwanhee.searchbook.R
 import com.hwanhee.searchbook.base.InfiniteListHandler
 import com.hwanhee.searchbook.base.LAUNCH_LISTEN_FOR_EFFECTS
 import com.hwanhee.searchbook.base.SearchKeyword
+import com.hwanhee.searchbook.base.defaultCoilBuilder
+import com.hwanhee.searchbook.base.logger.Logger.d
 import com.hwanhee.searchbook.model.ui.BookItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -52,6 +56,7 @@ fun BooksScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val networkError = stringResource(id = R.string.networkd_not_smooth)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(LAUNCH_LISTEN_FOR_EFFECTS) {
         effectFlow?.onEach { effect ->
@@ -83,6 +88,9 @@ fun BooksScreen(
                     focusManager.clearFocus()
                 },
                 onCloseClicked = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
                     onEventSent(BooksContract.Event.SearchOff)
                 },
                 onSearchTriggered = {
@@ -92,22 +100,41 @@ fun BooksScreen(
         },
     ) {
         Box {
-            BooksList(
-                listState = listState,
-                bookItems = state.books,
-                isLoadingMoreState = state.isLoadingMore,
-                onItemClicked = {
-                    itemId -> onEventSent(BooksContract.Event.BookSelection(itemId))
-                },
-                onScrollMeetsBottom = {
-                    onEventSent(BooksContract.Event.ScrollMeetsBottom)
+            when {
+                state.isLoading -> LoadingBar()
+                state.books.isEmpty() -> {
+                    NoItem()
                 }
-            )
-            if (state.isLoading)
-                LoadingBar()
+                else -> {
+                    BooksList(
+                        listState = listState,
+                        bookItems = state.books,
+                        isLoadingMoreState = state.isLoadingMore,
+                        onItemClicked = { itemId -> onEventSent(BooksContract.Event.BookSelection(itemId))
+                        },
+                        onScrollInProgress = {
+                            focusManager.clearFocus()
+                        },
+                        onScrollMeetsBottom = {
+                            onEventSent(BooksContract.Event.ScrollMeetsBottom)
+                        }
+                    )
+
+                }
+            }
         }
     }
 
+}
+
+@Composable
+fun NoItem() {
+    Image(
+        painterResource(R.drawable.ic_baseline_search_off_24),
+        contentDescription = "",
+        modifier = Modifier.fillMaxSize()
+            .padding(150.dp)
+    )
 }
 
 @Composable
@@ -134,7 +161,6 @@ fun MainAppBar(
             onSearchTriggered.invoke()
         }
     }
-
 }
 
 
@@ -188,11 +214,8 @@ fun SearchAppBar(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        if (text.isNotEmpty()) {
-                            onTextChange("")
-                        } else {
-                            onCloseClicked()
-                        }
+                        onTextChange("")
+                        onCloseClicked()
                     }
                 ) {
                     Icon(
@@ -220,8 +243,6 @@ fun SearchAppBar(
     }
 }
 
-
-
 @Composable
 fun DefaultAppBar(onSearchClicked: () -> Unit) {
     TopAppBar(
@@ -244,13 +265,13 @@ fun DefaultAppBar(onSearchClicked: () -> Unit) {
     )
 }
 
-
 @Composable
 fun BooksList(
     listState: LazyListState,
     bookItems: List<BookItem>,
     isLoadingMoreState: Boolean,
     onItemClicked: (id: String) -> Unit = { },
+    onScrollInProgress: () -> Unit = { },
     onScrollMeetsBottom: () -> Unit = { }
 ) {
     LazyColumn(
@@ -267,6 +288,11 @@ fun BooksList(
                 LoadingBar()
             }
         }
+    }
+
+    if(listState.isScrollInProgress) {
+        d("isScrollInProgress")
+        onScrollInProgress.invoke()
     }
 
     InfiniteListHandler(listState = listState) {
@@ -338,9 +364,7 @@ fun BookItemThumbnail(
     Image(
         painter = rememberImagePainter(
             data = thumbnailUrl,
-            builder = {
-                crossfade(true)
-            }
+            builder = defaultCoilBuilder()
         ),
         modifier = Modifier
             .size(120.dp),

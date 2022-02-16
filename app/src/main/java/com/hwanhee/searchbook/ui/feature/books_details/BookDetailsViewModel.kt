@@ -2,14 +2,11 @@ package com.hwanhee.searchbook.ui.feature.books_details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-
+import com.hwanhee.searchbook.NavigationKeys
 import com.hwanhee.searchbook.base.BaseViewModel
 import com.hwanhee.searchbook.model.BookRepository
-import com.hwanhee.searchbook.NavigationKeys
-import com.hwanhee.searchbook.ui.feature.books.BooksContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

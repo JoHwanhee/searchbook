@@ -3,9 +3,7 @@ package com.hwanhee.searchbook.ui.feature.books_details
 import com.hwanhee.searchbook.base.ViewEvent
 import com.hwanhee.searchbook.base.ViewSideEffect
 import com.hwanhee.searchbook.base.ViewState
-import com.hwanhee.searchbook.model.ui.BookItem
 import com.hwanhee.searchbook.model.ui.BookItemDetail
-import com.hwanhee.searchbook.ui.feature.books.BooksContract
 
 
 class BookDetailsContract {
