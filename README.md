@@ -3,13 +3,27 @@
 SearchBooks is an app built with Jetpack Compose and architecture of MVVM + MVI.
 
 This sample showcases:
-- Books Screen : the list of New Books
-- Search of books Screen : the list of searched books
+- Books screen : the list of new books
+- Search of books screen : the list of searched books
   - Support keyword for search
     - addition operation: android|java
     - subtraction operation : android-java
     - direct search : "android-java"
-- Details of a book : the details of a selected book 
+  - Support Infinite scroll 
+    - when scroll meets the 5th item from the bottom, to load more items
+- Support caching
+  - Improved loading speed by caching (sqlite and memory)
+    - the flow of to get list of new books
+      - memory caching
+      - database caching (sqlite-room)
+      - remote data
+    - the flow of to get details of a book
+      - database caching (sqlite-room)
+      - remote data
+    - the search method has no cached
+- Details of a book screen: the details of a selected book 
+- Support android instrumented test
+
 
 ![1_2](https://user-images.githubusercontent.com/12796737/153768587-80aa421b-844c-492d-a1f4-1c484850f66f.gif)
 ![1_5](https://user-images.githubusercontent.com/12796737/153768595-dddb555d-bdc7-43e0-843b-6ff533e8062c.gif)
@@ -32,6 +46,10 @@ Architecture layers:
 * Model
 
 ![스크린샷 2022-02-16 오전 2 37 50](https://user-images.githubusercontent.com/12796737/154117778-154039e5-7125-4573-a03e-95498138e82a.png)
+
+# Test
+- android instrumented test
+- android unit test
 
 # API
 - https://api.itbook.store/
