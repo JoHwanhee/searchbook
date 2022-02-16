@@ -11,8 +11,8 @@ class BookApi @Inject constructor(private val service: Service) {
     suspend fun getBooksNew(): BooksResponse = service.getBooksNew()
     suspend fun getBookByIsbn13(isbn13: String): BookDetailResponse =
         service.getBookByIsbn13(isbn13)
-    suspend fun search(word: String, index: Int): BooksResponse =
-        service.getBookBySearch(word, index)
+    suspend fun search(word: String, page: Int): BooksResponse =
+        service.getBookBySearch(word, page)
 
     interface Service {
         @GET("new")
